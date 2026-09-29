@@ -45,7 +45,7 @@ module.exports = function ({ isAuthenticated, isVeryfiUserIDFacebook, checkHasAn
 				case "welcome": {
 					renderFile = "dashboard-welcome";
 					let pending = [];
-					(threadData.data.welcomeAttachment || []).forEach(fileId => {
+					(drive.default ? threadData.data.welcomeAttachment || [] : []).forEach(fileId => {
 						pending.push(drive.default.files.get({
 							fileId,
 							fields: "name,mimeType,size,id,createdTime,webContentLink,fileExtension"
@@ -67,7 +67,7 @@ module.exports = function ({ isAuthenticated, isVeryfiUserIDFacebook, checkHasAn
 				case "leave": {
 					renderFile = "dashboard-leave";
 					let pending = [];
-					(threadData.data.leaveAttachment || []).forEach(fileId => {
+					(drive.default ? threadData.data.leaveAttachment || [] : []).forEach(fileId => {
 						pending.push(drive.default.files.get({
 							fileId,
 							fields: "name,mimeType,size,id,createdTime,webContentLink,fileExtension"
