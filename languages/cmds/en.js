@@ -345,18 +345,18 @@ module.exports = {
 		description: "View command usage",
 		guide: "{pn} [empty | <page number> | <command name>]",
 		text: {
-			help: "Commands:\n%1\nPage %2/%3 • Total: %4\n- Use %5help <page> to list\n- Use %5help <command> for details\n%6",
-			help2: "%1Total: %2\n- Use %3help <command> for details\n%4",
+			help: "╭─────────────⭓\n%1\n├─────⭔\n│ Page [ %2/%3 ]\n│ Currently, the bot has %4 commands that can be used\n│ » Type %5help <page> to view the command list\n│ » Type %5help to view the details of how to use that command\n├────────⭔\n│ %6\n╰─────────────⭓",
+			help2: "%1├───────⭔\n│ » Currently, the bot has %2 commands that can be used\n│ » Type %3help <command name> to view the details of how to use that command\n│ %4\n╰─────────────⭓",
 			commandNotFound: "Command \"%1\" does not exist",
-			getInfoCommand: "Name: %1\nDescription: %2\nAliases: %3\nGroup aliases: %4\nVersion: %5\nRole: %6\nCooldown: %7s\nAuthor: %8\n\nUsage:\n%9\n\nNotes:\n- <> = required, [] = choose one",
+			getInfoCommand: "╭── NAME ────⭓\n│ %1\n├── INFO\n│ Description: %2\n│ Other names: %3\n│ Other names in your group: %4\n│ Version: %5\n│ Role: %6\n│ Time per command: %7s\n│ Author: %8\n├── Usage\n%9\n├── Notes\n│ The content inside <XXXXX> can be changed\n│ The content inside [a|b|c] is a or b or c\n╰──────⭔",
 			doNotHave: "Do not have",
 			roleText0: "0 (All users)",
 			roleText1: "1 (Group administrators)",
 			roleText2: "2 (Admin bot)",
 			roleText0setRole: "0 (set role, all users)",
 			roleText1setRole: "1 (set role, group administrators)",
-			pageNotFound: "Page %1 does not exist"
-		}
+			pageNotFound: "
+				}
 	},
 	kick: {
 		description: "Kick member out of chat box",
@@ -451,7 +451,7 @@ module.exports = {
 			groupInfoHasGroup: "- Has group chats: \n%1",
 			noGroup: "You have not created/manage any notification group"
 		}
-	},
+		},
 	setalias: {
 		description: "Add an alias for any command in your group",
 		guide: "  This command is used to add/remove alias for any command in your group\n   {pn} add <alias> <command>: add an alias for the command in your group\n   {pn} add <alias> <command> -g: add an alias for the command in the whole system (only bot admin)\nExample:\n    {pn} add ctrk customrankcard\n\n   {pn} [remove | rm] <alias> <command>: remove an alias for the command in your group\n   {pn} [remove | rm] <alias> <command> -g: remove an alias for the command in the whole system (only bot admin)\nExample:\n    {pn} rm ctrk customrankcard\n\n   {pn} list: list all alias for commands in your group\n   {pn} list -g: list all alias for commands in the whole system"
