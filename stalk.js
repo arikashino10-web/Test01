@@ -1,4 +1,4 @@
-// প্রতি গ্রুপে চলমান সিকোয়েন্স (threadID -> { timers, targetID })
+// প্রতি২ গ্রুপে চলমান সিকোয়েন্স (threadID -> { timers, targetID })
 const running = new Map();
 // বট রিস্টার্টের আগ পর্যন্ত মেমোরিতে on/off অবস্থা (threadsData না থাকলে এটাই ব্যবহার হবে)
 const memState = new Map();
@@ -124,7 +124,7 @@ module.exports = {
 		if (!(await isEnabled(threadsData, threadID))) {
 			return message.reply("⚠️ stalk এই গ্রুপে বন্ধ আছে। চালু করতে: stalk on");
 		}
-		if (!event.isGroup) {
+		if (event.isGroup === false) {
 			return message.reply("⚠️ এই কমান্ড শুধু গ্রুপ চ্যাটে কাজ করবে।");
 		}
 		if (running.has(threadID)) {
@@ -156,40 +156,54 @@ module.exports = {
 			return message.reply("নিজেকে ট্যাগ করা যাবে না 😄");
 		}
 
-		// টার্গেট গ্রুপের সদস্য কি না দেখে নেওয়া
+		// টার্গেট গ্রুপের সদস্য কি না দেখে নেওয়া (৫ সেকেন্ডে উত্তর না এলে এই চেক বাদ)
 		try {
-			const info = await api.getThreadInfo(threadID);
-			if (info && Array.isArray(info.participantIDs) && !info.participantIDs.map(String).includes(String(targetID))) {
+			const info = await Promise.race([
+				Promise.resolve(api.getThreadInfo(threadID)),
+				new Promise(resolve => setTimeout(() => resolve(null), 5000))
+			]);
+			if (info && Array.isArray(info.participantIDs) && info.participantIDs.length
+				&& !info.participantIDs.map(String).includes(String(targetID))) {
 				return message.reply("❌ এই UID এই গ্রুপের সদস্য নন।");
 			}
 		} catch (e) {}
 
 		if (!name) name = await getName(usersData, targetID);
-		const arraytag = [{ id: targetID, tag: name }];
+		// fight1-এর মতো: ট্যাগ "@নাম" আকারে, মেসেজের একদম শুরুতে, fromIndex: 0
+		const cleanName = String(name).replace(/^@/, "");
+		const tag = "@" + cleanName;
+		const mentions = [{ tag, id: targetID, fromIndex: 0 }];
 
-		const send = (form) => {
+		// আগের কাজ করা কোডের মতোই message.reply দিয়ে পাঠানো; ব্যর্থ হলে api.sendMessage
+		const send = async (form) => {
 			try {
-				const p = api.sendMessage(form, threadID);
-				if (p && p.catch) p.catch(() => {});
+				await message.reply(form);
 			} catch (e) {
-				console.error("stalk send error:", e && e.message);
+				console.error("stalk message.reply error:", e && e.message);
+				try {
+					await api.sendMessage(form, threadID);
+				} catch (e2) {
+					console.error("stalk api.sendMessage error:", e2 && e2.message);
+				}
 			}
 		};
 
 		const timers = [];
 		running.set(threadID, { timers, targetID });
 
+		console.log(`[stalk] thread=${threadID} target=${targetID} name=${cleanName}`);
+		await message.reply(`✅ stalk শুরু হলো: ${cleanName}\n(থামাতে লিখুন: stalk off)`);
 		send("~বস JABED এর ভালোবাসা নাও প্রিয়~");
 
 		let last = 0;
 		for (const [delay, text] of MESSAGES) {
 			last = Math.max(last, delay);
 			timers.push(setTimeout(() => {
-				send({ body: text + " " + name, mentions: arraytag });
+				send({ body: tag + " " + text, mentions });
 			}, delay));
 		}
 		// শেষ হলে চলমান তালিকা থেকে সরানো
 		timers.push(setTimeout(() => running.delete(threadID), last + 1000));
 	}
 };
-   
+			
