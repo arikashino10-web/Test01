@@ -5,7 +5,7 @@ const https = require("https");
 const http = require("http");
 const yts = require("yt-search");
 
-const API_BASE_URL = "https://hinata-shazam-api-production.up.railway.app";
+const API_BASE_URL = "https://arafat-shazam-api-production-04.up.railway.app/?utm_id=97757_v0_s00_e0_tv0";
 
 const TMP_DIR        = path.join(__dirname, "cache");
 const MAX_BYTES      = 100 * 1024 * 1024;
